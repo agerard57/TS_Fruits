@@ -1,26 +1,60 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { Button, Typography, TextField } from "@mui/material";
+import { StockTable } from "./components";
+import { useStock } from "./hooks";
 
-function App() {
+interface FruitInventory {
+  name: string;
+  quantity: number;
+}
+
+export const App: React.FC = () => {
+  const [newFruitName, setNewFruitName] = useState<string>("");
+  const [stock, setStock] = useState<FruitInventory[]>([
+    { name: "Apple", quantity: 10 },
+    { name: "Pear", quantity: 5 },
+    { name: "Pineapple", quantity: 8 },
+  ]);
+
+  const { addFruit } = useStock(setStock);
+
+  const onClick = () => {
+    addFruit(newFruitName, 5);
+    setNewFruitName("");
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ padding: "20px" }}>
+      <Typography variant="h4" gutterBottom>
+        Fruit Inventory Management
+      </Typography>
+
+      <StockTable stock={stock} setStock={setStock} />
+
+      <Typography variant="h6" style={{ marginTop: "20px" }}>
+        Add a new fruit or select an existing one:
+      </Typography>
+
+      <TextField
+        label="Fruit"
+        value={newFruitName}
+        onChange={(e) => setNewFruitName(e.target.value)}
+        fullWidth
+        variant="outlined"
+        style={{ marginBottom: "10px", width: "50%" }}
+        helperText="You can select an existing fruit or type a new one"
+      />
+
+      <Button
+        variant="contained"
+        color="success"
+        onClick={onClick}
+        disabled={!newFruitName}
+      >
+        Add 5 Units
+      </Button>
     </div>
   );
-}
+};
 
 export default App;
